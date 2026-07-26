@@ -36,7 +36,7 @@ def _fix_youtube(url: str) -> str | None:
     if not pattern.match(url):
         return None
     parts = urlsplit(url)
-    query = [(key, value) for key, value in parse_qsl(parts.query, keep_blank_values=True) if key != "si"]
+    query = [(key, value) for key, value in parse_qsl(parts.query, keep_blank_values=True) if key not in ("si", "pp")]
     return urlunsplit((parts.scheme, parts.netloc, parts.path, urlencode(query), parts.fragment))
 
 
