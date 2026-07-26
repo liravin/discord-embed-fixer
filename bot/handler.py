@@ -25,7 +25,7 @@ async def handle_message(message: discord.Message) -> None:
     too_many = len(fixed_links) > MAX_EMBEDS
     for i in range(0, min(len(fixed_links), MAX_EMBEDS), _MAX_EMBEDS_PER_MESSAGE):
         batch = fixed_links[i : i + _MAX_EMBEDS_PER_MESSAGE]
-        credit = f"_Posted by {message.author.mention}_" if i == 0 else ""
+        credit = f"_Posted by {message.author.display_name}_" if i == 0 else ""
         content = "\n".join(batch)
         if credit:
             content = f"{credit}\n{content}"
