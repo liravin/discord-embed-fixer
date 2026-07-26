@@ -39,12 +39,17 @@ def _fix_instagram(url: str) -> str | None:
 
 
 def _fix_youtube(url: str) -> str | None:
-    pattern = re.compile(r"^https?://(?:www\.)?(?:youtube\.com|youtu\.be)/", re.IGNORECASE)
+    pattern = re.compile(r"^https?://(?:www\.)?(?:youtube\.com/watch|youtu\.be/)", re.IGNORECASE)
     if not pattern.match(url):
         return None
     parts = urlsplit(url)
-    query = [(key, value) for key, value in parse_qsl(parts.query, keep_blank_values=True) if key not in ("si", "pp")]
-    return urlunsplit((parts.scheme, parts.netloc, parts.path, urlencode(query), parts.fragment))
+    query = parse_qsl(parts.query, keep_blank_values=True)
+    if parts.netloc.lower().endswith("youtube.com"):
+        video_id = next((value for key, value in query if key == "v"), "")
+    else:
+        video_id = parts.path.strip("/")
+    remaining_query = [(key, value) for key, value in query if key not in ("v", "si", "pp")]
+    return urlunsplit(("https", "youtu.be", f"/{video_id}", urlencode(remaining_query), parts.fragment))
 
 
 _FIXERS = (_fix_reddit, _fix_twitter, _fix_instagram, _fix_youtube)
