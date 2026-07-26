@@ -31,6 +31,13 @@ def _fix_twitter(url: str) -> str | None:
     return re.sub(r"(?i)(https?://)(?:www\.)?(?:twitter|x)\.com", r"\1vxtwitter.com", url, count=1)
 
 
+def _fix_instagram(url: str) -> str | None:
+    pattern = re.compile(r"^https?://(?:www\.)?instagram\.com/", re.IGNORECASE)
+    if not pattern.match(url):
+        return None
+    return re.sub(r"(?i)(https?://)(?:www\.)?instagram\.com", r"\1oginstagram.com", url, count=1)
+
+
 def _fix_youtube(url: str) -> str | None:
     pattern = re.compile(r"^https?://(?:www\.)?(?:youtube\.com|youtu\.be)/", re.IGNORECASE)
     if not pattern.match(url):
@@ -40,4 +47,4 @@ def _fix_youtube(url: str) -> str | None:
     return urlunsplit((parts.scheme, parts.netloc, parts.path, urlencode(query), parts.fragment))
 
 
-_FIXERS = (_fix_reddit, _fix_twitter, _fix_youtube)
+_FIXERS = (_fix_reddit, _fix_twitter, _fix_instagram, _fix_youtube)
