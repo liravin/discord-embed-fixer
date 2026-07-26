@@ -39,13 +39,16 @@ def _fix_instagram(url: str) -> str | None:
 
 
 def _fix_youtube(url: str) -> str | None:
-    pattern = re.compile(r"^https?://(?:www\.)?(?:youtube\.com/watch|youtu\.be/)", re.IGNORECASE)
+    pattern = re.compile(r"^https?://(?:www\.)?(?:youtube\.com/(?:watch|shorts/)|youtu\.be/)", re.IGNORECASE)
     if not pattern.match(url):
         return None
     parts = urlsplit(url)
     query = parse_qsl(parts.query, keep_blank_values=True)
     if parts.netloc.lower().endswith("youtube.com"):
-        video_id = next((value for key, value in query if key == "v"), "")
+        if parts.path.lower().startswith("/shorts/"):
+            video_id = parts.path.rstrip("/").rsplit("/", 1)[-1]
+        else:
+            video_id = next((value for key, value in query if key == "v"), "")
     else:
         video_id = parts.path.strip("/")
     remaining_query = [(key, value) for key, value in query if key not in ("v", "si", "pp")]
