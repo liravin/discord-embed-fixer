@@ -5,7 +5,7 @@ import signal
 import discord
 from discord.ext import commands
 
-from bot import listener
+from bot import handler
 
 intents = discord.Intents.default()
 intents.voice_states = True
@@ -35,4 +35,4 @@ async def on_ready():
     logging.info("Logged in as %s (%s)", bot.user, bot.user.id)
 
 
-listener.register(bot)
+handler.register(bot)
