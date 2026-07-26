@@ -24,7 +24,11 @@ async def handle_message(message: discord.Message) -> None:
 
     too_many = len(fixed_links) > MAX_EMBEDS
     for i in range(0, min(len(fixed_links), MAX_EMBEDS), _MAX_EMBEDS_PER_MESSAGE):
-
+        batch = fixed_links[i : i + _MAX_EMBEDS_PER_MESSAGE]
+        
+        embed = "\n".join(batch)
+        response = f"[Posted by {message.author.display_name}]({embed})"
+        await message.channel.send(response)
     if too_many:
         await message.channel.send("Too many links to embed.")
 
