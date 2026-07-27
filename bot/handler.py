@@ -4,7 +4,7 @@ import discord
 from discord.ext import commands
 
 from bot.config import MAX_EMBEDS
-from bot.fixing import _find_fixed_links
+from bot.fixing import _URL_RE, _find_fixed_links
 
 _MAX_EMBEDS_PER_MESSAGE = 5
 
@@ -22,12 +22,16 @@ async def handle_message(message: discord.Message) -> None:
     if not fixed_links:
         return
 
+    comment = _URL_RE.sub("", message.clean_content)
+
     too_many = len(fixed_links) > MAX_EMBEDS
     for i in range(0, min(len(fixed_links), MAX_EMBEDS), _MAX_EMBEDS_PER_MESSAGE):
         batch = fixed_links[i : i + _MAX_EMBEDS_PER_MESSAGE]
-        
+
         embed = "\n".join(batch)
         response = f"[Posted by {message.author.display_name}]({embed})"
+        if comment.strip() and i == 0:
+            response += f"\n>>> {comment}"
         await message.channel.send(response)
     if too_many:
         await message.channel.send("Too many links to embed.")
